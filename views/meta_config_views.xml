@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_otm_meta_config_form" model="ir.ui.view">
+        <field name="name">otm.meta.config.form</field>
+        <field name="model">otm.meta.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_token" type="object" string="Test Token" class="btn-primary"/>
+                    <button name="action_regenerate_token" type="object" string="New Verify Token"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_logs" type="object" class="oe_stat_button" icon="fa-list">
+                            <field name="log_count" widget="statinfo" string="Leads Log"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group string="Meta Connection" name="grp_connection">
+                            <field name="name"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="webhook_url" widget="CopyClipboardChar"/>
+                            <field name="verify_token" widget="CopyClipboardChar"/>
+                            <field name="page_access_token" password="True"/>
+                            <field name="app_secret" password="True"/>
+                            <field name="graph_version"/>
+                        </group>
+                        <group string="Lead Mapping" name="grp_mapping">
+                            <field name="source_name"/>
+                            <field name="create_campaign"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_otm_meta_config" model="ir.actions.act_window">
+        <field name="name">Meta Lead Ads Settings</field>
+        <field name="res_model">otm.meta.config</field>
+        <field name="view_mode">form,list</field>
+    </record>
+
+    <menuitem id="menu_otm_meta_root" name="Meta Lead Ads" parent="custom_leads_19.menu_leads_config" sequence="40"
+              groups="custom_leads_19.group_super_admin,custom_leads_19.group_lead_manager"/>
+    <menuitem id="menu_otm_meta_config" name="Settings" parent="menu_otm_meta_root" action="action_otm_meta_config" sequence="1"/>
+    <menuitem id="menu_otm_meta_log" name="Meta Leads Log" parent="menu_otm_meta_root" action="action_otm_meta_lead_log" sequence="2"/>
+</odoo>

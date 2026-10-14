@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="meta_config_default" model="otm.meta.config">
+            <field name="name">Meta Lead Ads</field>
+        </record>
+    </data>
+</odoo>

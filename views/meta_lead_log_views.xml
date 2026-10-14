@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_otm_meta_lead_log_list" model="ir.ui.view">
+        <field name="name">otm.meta.lead.log.list</field>
+        <field name="model">otm.meta.lead.log</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'failed'" decoration-warning="state == 'duplicate'" decoration-success="state == 'created'">
+                <field name="create_date" string="Received"/>
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="campaign_name"/>
+                <field name="form_name"/>
+                <field name="state" widget="badge"/>
+                <field name="lead_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_otm_meta_lead_log_form" model="ir.ui.view">
+        <field name="name">otm.meta.lead.log.form</field>
+        <field name="model">otm.meta.lead.log</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <header>
+                    <button name="action_retry" type="object" string="Retry" class="btn-primary"
+                            invisible="state not in ('failed', 'pending')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,created"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="leadgen_id"/>
+                            <field name="name"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                            <field name="lead_id"/>
+                        </group>
+                        <group>
+                            <field name="campaign_name"/>
+                            <field name="adset_name"/>
+                            <field name="ad_name"/>
+                            <field name="form_name"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group invisible="not error"><field name="error" colspan="2"/></group>
+                    <notebook>
+                        <page string="Webhook Payload" name="page_payload"><field name="payload"/></page>
+                        <page string="Graph Data" name="page_graph"><field name="lead_data"/></page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_otm_meta_lead_log_search" model="ir.ui.view">
+        <field name="name">otm.meta.lead.log.search</field>
+        <field name="model">otm.meta.lead.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="campaign_name"/>
+                <filter name="failed" string="Failed" domain="[('state', '=', 'failed')]"/>
+                <filter name="duplicate" string="Duplicates" domain="[('state', '=', 'duplicate')]"/>
+                <filter name="created" string="Created" domain="[('state', '=', 'created')]"/>
+                <group>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_campaign" string="Meta Campaign" context="{'group_by': 'campaign_name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_otm_meta_lead_log" model="ir.actions.act_window">
+        <field name="name">Meta Leads Log</field>
+        <field name="res_model">otm.meta.lead.log</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
