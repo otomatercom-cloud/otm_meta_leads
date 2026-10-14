@@ -38,7 +38,7 @@
     <record id="action_otm_meta_config" model="ir.actions.act_window">
         <field name="name">Meta Lead Ads Settings</field>
         <field name="res_model">otm.meta.config</field>
-        <field name="view_mode">form,list</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="menu_otm_meta_root" name="Meta Lead Ads" parent="custom_leads_19.menu_leads_config" sequence="40"
