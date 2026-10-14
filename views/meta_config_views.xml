@@ -7,6 +7,7 @@
             <form>
                 <header>
                     <button name="action_test_token" type="object" string="Test Token" class="btn-primary"/>
+                    <button name="action_load_pages" type="object" string="Load Pages" class="btn-primary"/>
                     <button name="action_regenerate_token" type="object" string="New Verify Token"/>
                 </header>
                 <sheet>
@@ -21,7 +22,7 @@
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="webhook_url" widget="CopyClipboardChar"/>
                             <field name="verify_token" widget="CopyClipboardChar"/>
-                            <field name="page_access_token" password="True"/>
+                            <field name="page_access_token" password="True" string="User / Page Access Token"/>
                             <field name="app_secret" password="True"/>
                             <field name="graph_version"/>
                         </group>
@@ -29,6 +30,16 @@
                             <field name="source_name"/>
                             <field name="create_campaign"/>
                         </group>
+                    </group>
+                    <group string="Facebook Pages" name="grp_pages">
+                        <field name="page_ids" nolabel="1" colspan="2">
+                            <list editable="bottom">
+                                <field name="name"/>
+                                <field name="page_id"/>
+                                <field name="subscribed"/>
+                                <button name="action_subscribe" type="object" string="Subscribe" icon="fa-refresh"/>
+                            </list>
+                        </field>
                     </group>
                 </sheet>
             </form>

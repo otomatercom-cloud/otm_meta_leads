@@ -20,9 +20,11 @@ class OtmMetaConfig(models.Model):
         default=lambda self: secrets.token_urlsafe(16),
         help='Paste this same value in Meta App Dashboard > Webhooks > Verify Token.')
     page_access_token = fields.Char(
-        string='Page Access Token', groups='custom_leads_19.group_super_admin,custom_leads_19.group_lead_manager',
-        help='Long-lived Page access token with leads_retrieval, pages_show_list, '
-             'pages_manage_ads and pages_read_engagement permissions.')
+        string='Access Token', groups='custom_leads_19.group_super_admin,custom_leads_19.group_lead_manager',
+        help='Paste a User access token (permissions: leads_retrieval, pages_show_list, '
+             'pages_manage_ads, pages_read_engagement, pages_manage_metadata) and press '
+             '"Load Pages" to fetch every Page you manage with its own Page token. '
+             'A single Page token also works for a one-Page setup.')
     app_secret = fields.Char(
         string='App Secret',
         groups='custom_leads_19.group_super_admin,custom_leads_19.group_lead_manager',
@@ -34,6 +36,7 @@ class OtmMetaConfig(models.Model):
     create_campaign = fields.Boolean(
         string='Create Source Campaign', default=True,
         help='Create a Source Campaign (named after the Meta campaign) under the Meta source.')
+    page_ids = fields.One2many('otm.meta.page', 'config_id', string='Pages')
     webhook_url = fields.Char(string='Callback URL', compute='_compute_webhook_url')
     log_count = fields.Integer(compute='_compute_log_count')
 
@@ -53,6 +56,53 @@ class OtmMetaConfig(models.Model):
     def action_regenerate_token(self):
         for rec in self:
             rec.verify_token = secrets.token_urlsafe(16)
+
+    def _token_for_page(self, page_id):
+        """Page-specific token when known, otherwise the main access token."""
+        self.ensure_one()
+        page = self.sudo().page_ids.filtered(lambda p: p.page_id == str(page_id or '') and p.page_access_token)[:1]
+        return page.page_access_token or self.sudo().page_access_token
+
+    def action_load_pages(self):
+        """List the Pages the access token manages, store each Page token and subscribe leadgen."""
+        import requests
+        self.ensure_one()
+        token = self.sudo().page_access_token
+        if not token:
+            raise UserError(_('Paste the access token first.'))
+        url = 'https://graph.facebook.com/%s/me/accounts' % self.graph_version
+        params = {'access_token': token, 'fields': 'id,name,access_token', 'limit': 100}
+        pages = []
+        try:
+            while url:
+                resp = requests.get(url, params=params, timeout=20)
+                data = resp.json()
+                if resp.status_code != 200:
+                    raise UserError(_('Meta rejected the token: %s') % (
+                        data.get('error', {}).get('message') or resp.text))
+                pages += data.get('data', [])
+                url = (data.get('paging') or {}).get('next')
+                params = None
+        except UserError:
+            raise
+        except Exception as e:
+            raise UserError(_('Could not reach Meta Graph API: %s') % e)
+        if not pages:
+            raise UserError(_('No Pages returned. Use a User token (not a Page token) with pages_show_list.'))
+        Page = self.env['otm.meta.page'].sudo()
+        for pg in pages:
+            line = Page.search([('config_id', '=', self.id), ('page_id', '=', pg['id'])], limit=1)
+            vals = {'name': pg.get('name') or pg['id'], 'page_access_token': pg.get('access_token')}
+            if line:
+                line.write(vals)
+            else:
+                line = Page.create(dict(vals, config_id=self.id, page_id=pg['id']))
+            line.action_subscribe()
+        return {
+            'type': 'ir.actions.client', 'tag': 'display_notification',
+            'params': {'title': _('Pages loaded'), 'type': 'success', 'sticky': False,
+                       'message': _('%s Page(s) loaded and subscribed to leadgen.') % len(pages)},
+        }
 
     def action_open_logs(self):
         self.ensure_one()

@@ -3,3 +3,5 @@ access_otm_meta_config_mgr,otm.meta.config manager,model_otm_meta_config,custom_
 access_otm_meta_config_sa,otm.meta.config super admin,model_otm_meta_config,custom_leads_19.group_super_admin,1,1,1,1
 access_otm_meta_lead_log_mgr,otm.meta.lead.log manager,model_otm_meta_lead_log,custom_leads_19.group_lead_manager,1,1,0,0
 access_otm_meta_lead_log_sa,otm.meta.lead.log super admin,model_otm_meta_lead_log,custom_leads_19.group_super_admin,1,1,1,1
+access_otm_meta_page_mgr,otm.meta.page manager,model_otm_meta_page,custom_leads_19.group_lead_manager,1,1,1,0
+access_otm_meta_page_sa,otm.meta.page super admin,model_otm_meta_page,custom_leads_19.group_super_admin,1,1,1,1

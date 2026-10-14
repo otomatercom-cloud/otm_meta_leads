@@ -68,7 +68,7 @@ class OtmMetaLeadLog(models.Model):
                 log.write({'state': 'failed', 'error': str(e)})
 
     def _graph_get(self, config, path, params=None):
-        params = dict(params or {}, access_token=config.sudo().page_access_token)
+        params = dict(params or {}, access_token=config._token_for_page(self.page_id))
         resp = requests.get(
             'https://graph.facebook.com/%s/%s' % (config.graph_version, path),
             params=params, timeout=15)
@@ -100,7 +100,7 @@ class OtmMetaLeadLog(models.Model):
 
     def _process_one(self, config):
         self.ensure_one()
-        if not config.sudo().page_access_token:
+        if not config._token_for_page(self.page_id):
             raise UserError(_('Page Access Token is not configured.'))
         data = self._graph_get(config, self.leadgen_id, {
             'fields': 'id,created_time,ad_id,ad_name,adset_id,adset_name,campaign_id,'
