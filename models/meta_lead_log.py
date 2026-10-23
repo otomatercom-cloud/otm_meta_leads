@@ -147,6 +147,7 @@ class OtmMetaLeadLog(models.Model):
             'meta_leadgen_id': self.leadgen_id,
             'meta_form_name': form_name,
             'meta_ad_name': ad_name,
+            'meta_adset_name': data.get('adset_name'),
         }
         if campaign:
             vals['source_campaign_id'] = campaign.id

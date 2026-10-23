@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_leads_logic_form_meta" model="ir.ui.view">
+        <field name="name">leads.logic.form.meta</field>
+        <field name="model">leads.logic</field>
+        <field name="inherit_id" ref="custom_leads_19.view_leads_logic_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form//field[@name='leads_source']" position="after">
+                <field name="meta_ad_name" invisible="not meta_ad_name"/>
+                <field name="meta_adset_name" invisible="not meta_adset_name"/>
+                <field name="meta_form_name" invisible="not meta_form_name"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_leads_logic_tree_meta" model="ir.ui.view">
+        <field name="name">leads.logic.list.meta</field>
+        <field name="model">leads.logic</field>
+        <field name="inherit_id" ref="custom_leads_19.view_leads_logic_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list//field[@name='leads_source']" position="after">
+                <field name="meta_adset_name" optional="hide"/>
+                <field name="meta_ad_name" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_leads_logic_search_meta" model="ir.ui.view">
+        <field name="name">leads.logic.search.meta</field>
+        <field name="model">leads.logic</field>
+        <field name="inherit_id" ref="custom_leads_19.view_leads_logic_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search//field[@name='leads_source']" position="after">
+                <field name="meta_adset_name"/>
+                <field name="meta_ad_name"/>
+            </xpath>
+            <xpath expr="//filter[@name='group_source_campaign']" position="after">
+                <filter string="Meta Ad Set" name="group_meta_adset" context="{'group_by': 'meta_adset_name'}"/>
+                <filter string="Meta Ad" name="group_meta_ad" context="{'group_by': 'meta_ad_name'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

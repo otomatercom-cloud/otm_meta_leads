@@ -19,6 +19,7 @@ creates leads in custom_leads_19 (leads.logic):
         'data/meta_data.xml',
         'views/meta_lead_log_views.xml',
         'views/meta_config_views.xml',
+        'views/leads_logic_views.xml',
     ],
     'installable': True,
     'application': False,
